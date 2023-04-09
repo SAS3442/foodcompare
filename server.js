@@ -323,6 +323,6 @@ app.post("/distance",isOauth,async (req,res)=>{
     res.render("comp",{list:sort(),finallist:final_array,nexturl:"/wrongSearch",username:req.session.userobject.name,picture:req.session.userobject.picture})
 })
 
-app.listen(3000,()=>{
+app.listen(process.env.Port||3000,()=>{
     console.log("Server running on port 3000");
 })
