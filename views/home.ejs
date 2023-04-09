@@ -7,8 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="css/homestyles.css">
-    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&family=Source+Sans+Pro:wght@300&display=swap" rel="stylesheet">
+<link rel="icon" type="image/x-icon" href="css/favicon.ico">
 </head>
 
 <body>
@@ -48,19 +50,21 @@
     </div>
 
     <div class="list-down">
+        <form class="list-down-form" method="post" action="/finalselecteditem">
         <% for(i=0;i<finallist.length-1;i++){%>
-            <button type="submit" name="" class="list-items">
+            <button type="submit" name="listdown" class="list-items" value=<%=i%>>
                 <%=finallist[i].name%>
             </button>
             <%}%>
                 <% if(finallist.length!=1){ %>
-                    <button type="submit" name=""
-                        class="list-items-last"><%=finallist[finallist.length-1].name%></button>
+                    <button type="submit" name="listdown"
+                        class="list-items-last" value=<%=finallist.length-1%>><%=finallist[finallist.length-1].name%></button>
                     <% } %>
+                </form>
     </div>
     <div class="feed">
         <div class="feeds" id="feed1">
-            <img id="feed1" src="/images/item1.jpg" alt="">
+            <img id="feed1" src="css/item1.jpg" alt="">
         </div>
         <div class="feeds" id="feed2"></div>
         <div class="feeds" id="feed3"></div>
@@ -71,12 +75,16 @@
         <% for(i=0;i<items.length;i++){%>
             <div class="dish">
                 <div class="dishinfo">
-                    <img class="dishlogo" src=<%=items[i].rating_max_id%>>
+                    <%if(Math.floor(Math.random()*2)%2==0){%>
+                      <img class="restlogo" src="css/swiggy_logo1.png">
+                      <% } else{%>
+                        <img class="restlogo" src="css/Zomato_logo1.png">
+                    <%}%>
                     <p class="dishrating">
-                        <%=items[i].rating_max%><img style="height: 10px;" src="/images/starlogo.png">
+                        <%=items[i].rating_max%><img style="height: 10px;" src="css/starlogo.png">
                     </p>
                 </div>
-                <img class="dishimg" src=<%=items[i].picture%> alt="">
+                <img class="dishimg" src=<%=items[i].picture%> alt="" >
                 <p class="dishname">
                     <%=items[i].name%>
                 </p>
@@ -89,15 +97,21 @@
         <% for(i=0;i<restros.length;i++){%>
             <div class="restaurant">
                 <div class="restinfo">
-                    <img class="restlogo" src=<%=restros[i].rating_max_id%>>
+                    <%if(Math.floor(Math.random()*2)%2==0){%>
+                        <img class="restlogo" src="css/swiggy_logo1.png">
+                        <% } else{%>
+                          <img class="restlogo" src="css/Zomato_logo1.png">
+                      <%}%>
                     <p class="restrating">
-                        <%=restros[i].rating_max%><img style="height: 10px;" src="/images/starlogo.png">
+                        <%=restros[i].rating_max%><img style="height: 10px;" src="css/starlogo.png">
                     </p>
                 </div>
-                <img class="restimg" src="<%=restros[i].picture%>" alt="">
+                <a href=<%=restros[i]._doc.restlink%> ><img class="restimg" src="<%=restros[i].picture%>" alt=""></a>
+               <div style="display: flex; justify-content: center; align-items: center;">
                 <p class="restname">
                     <%=restros[i].name%>
                 </p>
+                </div>
             </div>
             <%}%>
 

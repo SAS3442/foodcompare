@@ -20,6 +20,7 @@ let final_array=[{name:"Explore More"}];                 //array of best search 
 var decoded;                            //user decoded string object
 var perfectstr;                         //name of the updated matched string item
 let perfectstr_arr=[];                  //array to store matched string item //wherever intializing use let
+let index=0;
 
 const store=new mongodbsession({
     uri:"mongodb+srv://"+process.env.PROFILES_USER+":"+process.env.PROFILES_PASS+"@sas.cgtl0ii.mongodb.net/Profiles",
@@ -48,11 +49,8 @@ const schemaitems=mongoose.Schema({
     restraunt:String,
     rating:[],
     rating_max:Number,
-    ratingmax_id:Number,
-    price:Number,
-    time:String,
-    description:String,
-    id:Number
+    rating_max_id:Number,
+    id:Number,
 })
 
 const item=mongoose.model("item",schemaitems) // foods variety schema
@@ -105,42 +103,12 @@ const isOauth=(req,res,next)=>{
     }
 }
 
-app.get("/homepage",isOauth,async (req,res)=>{
-
-    // const newitem=new item({           //added a new items to the food database items collection
-    //     name:"pizaa",
-    //     picture:"ssssss",
-    //     restraunt:"d09",
-    //     rating:[4.3,3.4,4.5],
-    //     rating_max:4.2,
-    //     rating_max_id:1,
-    //     id:1,
-    // })
-    // await newitem.save()
-    await item.find({rating_max:{$gt:4}})
-    .then((foundItems)=>{
-       senditems=foundItems
-    })
-
-    // const newrestro=new restro({           //added a new items to the food database items collection
-    //     name:"dominoz",
-    //     picture:"ssssss",
-    //     rating:[4.3,3.4,4.5],
-    //     rating_max:4.5,
-    //     item_id:[1],
-    //     rating_max_id:1,
-    //     id:1,
-    // })
-    // await newrestro.save()
-
-    await restro.find({rating_max:{$gt:4}})
-    .then((foundItems)=>{
-       // console.log(foundItems)
-       sendrestros=foundItems
-    })
-
-    res.render("home",{nexturl:"/wrongSearch",finallist:final_array,items:senditems,restros:sendrestros,username:req.session.userobject.name,picture:req.session.userobject.picture})
-})
+app.get("/",(req,res)=>{
+    if(req.session.isOauth){
+        res.redirect("/homepage")
+    }else{
+    res.redirect(url) //using the auth url
+}})
 
 app.get("/login",(req,res)=>{
     res.render("login")
@@ -178,9 +146,18 @@ app.get("/homepage",isOauth,async (req,res)=>{
     //     id:1,
     // })
     // await newitem.save()
-    await item.find({rating_max:{$gt:4}})
-    .then((foundItems)=>{
-       senditems=foundItems
+    await item.find({rating_max:{$gt:3.9}})
+    .then(async (foundItems)=>{
+        let found=[];
+        let limit=foundItems.length;
+        for(let i=0;i<10;i++){
+            let k=0+i;
+            for(let j=0;j<=5;j++){
+                found.push(foundItems[k]);
+                k+=10;
+            }
+        }
+       senditems=[...found]
     })
 
     // const newrestro=new restro({           //added a new items to the food database items collection
@@ -194,11 +171,158 @@ app.get("/homepage",isOauth,async (req,res)=>{
     // })
     // await newrestro.save()
 
-    await restro.find({rating_max:{$gt:4.2}})
+    await restro.find({rating_max:{$gt:3.5}})
     .then((foundItems)=>{
        // console.log(foundItems)
        sendrestros=foundItems
     })
-
+    console.log(senditems[0]);
     res.render("home",{nexturl:"/wrongSearch",finallist:final_array,items:senditems,restros:sendrestros,username:req.session.userobject.name,picture:req.session.userobject.picture})
+})
+
+
+app.post("/wrongSearch",isOauth,(req,res)=>{
+
+    searched_string=req.body.avi
+    res.redirect("/appropriateSearches")
+
+})
+
+app.get("/appropriateSearches",isOauth,async (req,res)=>{
+
+    var items_array
+    // for(let i=0;i<searched_string.length-2;i++)
+    // {
+    //     var short_word=searched_string.substring(i,i+3)
+    //     // console.log(short_word)
+    //     await item.find({name:{$regex:short_word}})
+    //     .then((found)=>{
+    //         //console.log(found)
+    //         items_array=found
+    //     })
+
+    //     if(items_array.length!=0)
+    //     {
+    //         break;
+    //     }
+    // }
+    await item.find({name:{$regex:searched_string, $options: "i"}})
+        .then((found)=>{
+            //console.log(found)
+            items_array=found
+        })
+    var restro_array
+    // for(let i=0;i<searched_string.length-2;i++)
+    // {
+    //     var short_word=searched_string.substring(i,i+3)
+    //     await restro.find({name:{$regex:short_word}})
+    //     .then((found)=>{
+    //         //console.log(found)
+    //         restro_array=found
+    //     })
+        
+    //     if(restro_array.length!=0)
+    //     {
+    //         break;
+    //     }
+    // }
+    await restro.find({name:{$regex:searched_string, $options: "i"}})
+        .then((found)=>{
+            //console.log(found)
+            restro_array=found
+        })
+
+    final_array=[].concat(items_array,restro_array)
+    if(final_array.length==0){
+        final_array=[{name:"Didn't work"}];
+        res.render("home",{nexturl:"/wrongsearch",finallist:final_array,items:senditems,restros:sendrestros,username:req.session.userobject.name,picture:req.session.userobject.picture}) //shoud send found data to homepage
+    }
+    console.log(final_array)
+    res.render("home",{nexturl:"/wrongsearch",finallist:final_array,items:senditems,restros:sendrestros,username:req.session.userobject.name,picture:req.session.userobject.picture}) //shoud send found data to homepage
+})
+
+app.post("/finalselecteditem",isOauth,(req,res)=>{
+    console.log(req.body.listdown);
+    index=parseInt(req.body.listdown);
+    console.log(index);
+    if(index==undefined){
+        index=0;
+    }
+    res.redirect("/secondpage")
+})
+
+app.get("/secondpage",isOauth,async (req,res)=>{
+    var damm;
+    await item.find({name:{$eq:final_array[index].name}})
+    .then((found)=>{
+        damm=found;
+    })
+    damm=JSON.parse(JSON.stringify(damm));    //this converts objent in string format to javascript object
+
+    function sort(){
+        for(let i=0;i<damm.length-1;i++){
+            for(let j=0;j<damm.length-i-1;j++)
+            {
+                if(damm[j].price>damm[j+1].price)
+                { 
+                    var temp=damm[j];
+                    damm[j]=damm[j+1];
+                    damm[j+1]=temp;
+                }
+            }
+        }return damm}
+    
+    res.render("comp",{list:sort(),finallist:final_array,nexturl:"/wrongSearch",username:req.session.userobject.name,picture:req.session.userobject.picture})
+})
+
+app.post("/rating",isOauth,async (req,res)=>{
+    var damm;
+    await item.find({name:{$eq:final_array[index].name}})
+    .then((found)=>{
+        damm=found;
+    })
+    damm=JSON.parse(JSON.stringify(damm));    //this converts objent in string format to javascript object
+
+    function sort(){
+        for(let i=0;i<damm.length-1;i++){
+            for(let j=0;j<damm.length-i-1;j++)
+            {
+                if(damm[j].rating_max>damm[j+1].rating_max)
+                { 
+                    var temp=damm[j];
+                    damm[j]=damm[j+1];
+                    damm[j+1]=temp;
+                }
+            }
+        }return damm}
+    
+    res.render("comp",{list:sort(),finallist:final_array,nexturl:"/wrongSearch",username:req.session.userobject.name,picture:req.session.userobject.picture})
+})
+
+app.post("/distance",isOauth,async (req,res)=>{
+    var damm;
+    await item.find({name:{$eq:final_array[index].name}})
+    .then((found)=>{
+        damm=found;
+    })
+    damm=JSON.parse(JSON.stringify(damm));    //this converts objent in string format to javascript object
+
+    function sort(){
+        for(let i=0;i<damm.length-1;i++){
+            for(let j=0;j<damm.length-i-1;j++)
+            {
+                if(damm[j].time>damm[j+1].time)
+                { 
+                    var temp=damm[j];
+                    damm[j]=damm[j+1];
+                    damm[j+1]=temp;
+                }
+            }
+        }return damm}
+    
+    res.render("comp",{list:sort(),finallist:final_array,nexturl:"/wrongSearch",username:req.session.userobject.name,picture:req.session.userobject.picture})
+})
+
+app.listen(3000,()=>{
+    console.log("Server running on port 3000");
 })

@@ -1,0 +1,140 @@
+    <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>comparison page</title>
+    <link rel="stylesheet" href="css/compstyles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&family=Source+Sans+Pro:wght@300&display=swap" rel="stylesheet">
+<link rel="icon" type="image/x-icon" href="css/favicon.ico">
+</head>
+
+<body>
+
+    <!-- navbar -->
+
+    <div class="navbar">
+        <div class="dashboard">..</div>
+        <div class="burger">
+            <img src="css/Burgrer.png" style="height: 30px;" alt="">
+        </div>
+        <div class="locationimg">
+            <img src="css/location-56.png" style="height: 27px;" alt="">
+
+        </div>
+        <div class="location">
+            <p>Mysore</p>
+        </div>
+        <!-- <div class="searchbar">
+            <% if(finallist.length==1){ %>
+                <form style="display: flex" action=<%=nexturl%> method="post">
+                    <input type="text" class="searchtext" placeholder=<%=finallist[0].name%> name="avi">
+                    <button class="search-icon"><img style="height: 30px;" src="css/search-icon.png" alt=""></button>
+
+                </form>
+                <% } else{%>
+                    <form style="display: flex" action=<%=nexturl%> method="post">
+                        <input type="text" class="searchtext-else" placeholder=<%=finallist[0].name%> name="avi">
+                        <button class="search-icon-else"><img style="height: 30px;" src="css/search-icon.png"
+                                alt=""></button>
+                    </form>
+                    <% } %>
+        </div> -->
+
+        <div class="profile">
+            <div>
+                <img class="profile-image" src=<%=picture%> alt="not got it">
+            </div>
+        </div>
+    </div>
+    <!-- <div class="list-down">
+        <form action=<%=nexturl%> method="post">
+        <% for(i=0;i<finallist.length-1;i++){%>
+            <button type="submit" name="listdown" class="list-items" value=<%i%>>
+                <%=finallist[i].name%>
+            </button>
+            <%}%>
+                <% if(finallist.length!=1){ %>
+                    <button type="submit" name="listdown"
+                        class="list-items-last" value=<%finallist.length-1%>><%=finallist[finallist.length-1].name%></button>
+                    <% } %>
+                </form> -->
+    </div>
+
+    <!-- itemselected -->
+
+    <div class="dishinfo">
+
+        <div>
+            <img class="dishimg" src=<%= list[0].picture %> alt="">
+        </div>
+
+            <p class="dishname" style="font-size: 2.5em; font-family:'Times New Roman', Times, serif;margin-top: 25px;margin-bottom: 20px;">
+                <strong>
+                    <%=list[0].name%>
+                </strong>
+            </p>
+        <!-- <p style="margin-bottom:10px;">Categorize By</p> -->
+    </div>
+    <div class="category">
+        <form method="post" action="/rating"><button type="submit" name="category" value="rating" class="button">Rating</button></form>
+        <form method="post" action="/finalselecteditem"><button type="submit" name="category" value="rating" class="button">Price</button></form>
+        <form method="post" action="/distance"><button type="submit" name="category" value="rating" class="button">Distance</button></form>
+    </div>
+
+    <!-- comparison -->
+
+    <div class="comparison">
+        <% for(i=0;i<list.length;i++){%>
+            <div style="display: flex; justify-content: center;">
+            <div class="fullitem">
+
+                <div class="item-image"><img class="item-img-style" 
+                        src= <%=list[i].picture%> alt="item image"></div>
+                <% if(list[i].rating_max_id==0){ %>
+                <div class="item-service-logo"><img style=" height: 65px;width: 40px;" src="css/Swiggy_logo.svg.png"
+                        alt="item service"></div>
+                <% }else{ %>
+                <div class="item-service-logo"><img style=" height: 40px;width: 100px;" src="css/Zomato_logo1.png"
+                        alt="item service"></div>
+                <% }%>
+                <div class="item-price">
+                    <p style="font-size: 2.5rem; margin: 0px;">
+                        <%=list[i].price%>
+                    </p>
+                </div>
+                <div class="rest-name">
+                    <p style="font-size: 1.5em;">
+                        <%=list[i].restraunt%>
+                    </p>
+                </div>
+                <div class="extra-item-info">
+                    <p style="font: 1em;">
+                        <%=list[i].time%> <span> min</span>
+                    </p>
+                    <p>
+                        <%=list[i].rating%>
+                        <img style="height: 10px;" src="css/starlogo.png">
+                    </p>
+                </div>
+                <div class="rest-item-name">
+                    <p style="padding-left: 41px;font-size: 1.2em;">J<%=list[i].name%>
+                    </p>
+                </div>
+                <div class="item-description">
+                    <p style="padding-left: 41px;font-size: 1em;">
+                        <%=list[i].description%>
+                    </p>
+                </div>
+            </div>
+            </div>
+            <%}%>
+
+    </div>
+</body>
+
+</html>
